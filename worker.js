@@ -316,7 +316,7 @@ async function handleApi(request, env, url) {
           String(p.title || 'Ohne Titel').slice(0, 180), JSON.stringify(clean),
           String(p.dedicationFrom || '').slice(0, 180), String(p.dedicationTo || '').slice(0, 180),
           p.isAdult ? 1 : 0,
-          ['french', 'german', 'english'].includes(p.quotesStyle) ? p.quotesStyle : 'french',
+          ['french', 'swiss', 'german', 'english'].includes(p.quotesStyle) ? p.quotesStyle : 'french',
           p.viewMode === 'book' ? 'book' : 'manuscript',
           TRIM_IDS.includes(p.trimFormat) ? p.trimFormat : 'normseite',
           String(p.authorName || '').slice(0, 180), String(p.blurb || '').slice(0, 4000), String(p.imprint || '').slice(0, 2000),
@@ -604,22 +604,30 @@ h3{font-size:16px;color:#fff;margin:15px 0 8px}
 .skull{width:40px;height:40px;background:#18181f;border-radius:8px;border:1px solid var(--border-color);display:inline-flex;align-items:center;justify-content:center;font-size:24px}
 .toprow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
 .homebtn{width:auto;background:#18181f;border:1px solid var(--border-color);padding:8px 14px}
-.sheet{background:#f6f0e4;color:#1a1612;box-shadow:0 18px 50px #0008;margin:8px auto;padding:24px 28px;width:min(100%,calc(60ch + 4rem));border-radius:2px}
-.sheet textarea{background:transparent;color:#1a1612;border:0;resize:none;outline:none;font-family:"Courier New",monospace;font-size:12pt;line-height:1.5;width:60ch;max-width:100%;min-height:38em;margin:0;padding:0}
-.bookview{font-family:Georgia,"Times New Roman",serif;font-size:12.5pt;line-height:1.55;text-align:justify;hyphens:auto;color:#1a1612}
-.pages{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.pages button{width:auto;min-width:40px;background:#1a1a22}
-.pages button.on{background:#f6f0e4;color:#121216}
+.sheet{background:#f6f0e4;color:#1a1612;box-shadow:0 18px 50px #0008;margin:0 auto;padding:20px 24px 16px;width:calc(60ch + 48px);max-width:100%;border-radius:2px;box-sizing:border-box;overflow:hidden}
+.sheet textarea,.sheet .bodytxt{background:transparent;color:#1a1612;border:0;resize:none;outline:none;font-family:"Courier New",Courier,monospace;font-size:12pt;line-height:1.5;width:60ch;max-width:100%;height:calc(30 * 1.5em);overflow:hidden;margin:0;padding:0;white-space:pre-wrap;word-wrap:break-word;display:block}
+.sheet .foot{font:11px Arial,sans-serif;color:#5a5348;display:flex;justify-content:space-between;margin-top:8px}
+.stack{display:flex;flex-direction:column;align-items:center;gap:36px;padding:8px 0 60px}
+.sheet.right,.bleed.right{transform:translateX(32px)}
+.sheet.left,.bleed.left{transform:translateX(-32px)}
+.bookview{font-family:Georgia,"Times New Roman",serif}
+.jumprow{position:sticky;top:0;z-index:6;background:#121216;padding:10px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.jumprow input{width:72px;margin:0}
+.jumprow button{width:auto}
+.pages{display:none}
 .ed{display:grid;gap:16px}
 @media(min-width:1100px){.ed{grid-template-columns:1fr 300px}}
 .tools{background:var(--bg-box);border:1px solid var(--border-color);border-radius:10px;padding:16px}
+.pending{border:1px solid #ff4b4f;background:#2a1215;padding:12px;border-radius:8px;margin:12px 0}
+.adult-flag{background:#3f1515;color:#f87171;border:1px solid #ff4b4b;padding:8px 12px;border-radius:8px;font-size:13px;margin:8px 0}
+.imgbox{margin-top:14px;border:1px solid var(--border-color);border-radius:8px;padding:12px}
 .footer-bar{margin-top:80px;border-top:1px solid var(--border-color);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--text-muted);font-size:13px}
 .pwa{background:#18181f;border:1px solid var(--border-color);border-radius:10px;padding:12px 16px;margin-bottom:18px}
 .pwa.hidden{display:none}
 .bleed{background:repeating-linear-gradient(-45deg,#6b2222,#6b2222 7px,#4a1616 7px,#4a1616 14px);display:inline-block;position:relative;margin:8px auto;max-width:100%}
 .bleed .tag{position:absolute;top:3px;left:6px;z-index:2;background:#0009;color:#ffb4b4;font:11px/1.3 Arial;padding:3px 7px;border-radius:4px}
 .trim{background:#f6f0e4;color:#1a1612;position:relative;overflow:hidden;box-sizing:border-box}
-.trim textarea{width:100%;height:100%;min-height:0;font:12.5pt/1.55 Georgia,"Times New Roman",serif;text-align:justify}
+.trim textarea,.trim .bodytxt{width:100%;height:100%;min-height:0;font:12.5pt/1.55 Georgia,"Times New Roman",serif;text-align:justify;overflow:hidden;resize:none;border:0;background:transparent;white-space:pre-wrap}
 .pnum{position:absolute;left:0;right:0;font:10pt Georgia,serif;color:#1a1612;pointer-events:none;padding:0 12px;box-sizing:border-box}
 .pnum.top{top:5px}.pnum.bottom{bottom:5px}
 .pnum.left{text-align:left}.pnum.center{text-align:center}.pnum.right{text-align:right}
@@ -629,16 +637,15 @@ h3{font-size:16px;color:#fff;margin:15px 0 8px}
   .app-container{flex-direction:column}
   .sidebar{position:static;width:100%;height:auto}
   .main{padding:16px}
-  .sheet{width:100%;padding:16px}
-  .sheet textarea{width:100%;min-height:18em}
+  .sheet{width:100%;padding:14px;transform:none}
+  .sheet textarea,.sheet .bodytxt{width:100%}
   .micbar{display:flex;position:sticky;bottom:0;z-index:20;gap:8px;background:#121216;padding:10px 0;border-top:1px solid var(--border-color)}
   .micbar button{flex:1}
 }
 img.illu{width:100%;border-radius:8px;margin-top:8px}
 @media print{
-  .sidebar,.tabs,.footer-bar,.tools,.pwa,.toprow,button,.micbar,.pages{display:none!important}
-  .app-container,.main,.ed{display:block;padding:0;background:#fff}
-  .bleed{background:none;box-shadow:none}
+  body{background:#fff}
+  .sidebar,.tabs,.footer-bar,.tools,.pwa,.toprow,button,.micbar,.jumprow,.screen-only{display:none!important}
 }
 
 </style>
@@ -671,7 +678,8 @@ const TRIMS={a5:{w:148,h:210,label:"DIN A5 · Amazon 14,8 \u00d7 21,0 cm"},"5x8"
 const STORAGE={S:{label:"Paket S",tokens:200,blurb:"Ca. 40 Manuskripte a 200 Normseiten. Ein Jahr."},M:{label:"Paket M",tokens:500,blurb:"Ca. 90 Manuskripte a 200 Normseiten. Ein Jahr."},L:{label:"Paket L",tokens:1100,blurb:"Ca. 180 Manuskripte a 200 Normseiten. Ein Jahr."},XL:{label:"Paket XL",tokens:2200,blurb:"Ca. 360 Manuskripte a 200 Normseiten. Ein Jahr."}};
 const MODELS=[{id:"chroma",name:"CHROMA Bildstark",tokens:6},{id:"venice-sd35",name:"Venedig SD 35",tokens:6},{id:"muse-image",name:"Muse Image",tokens:7},{id:"wan-27",name:"WAN 27",tokens:8},{id:"ideogram-v4",name:"Ideogram V4",tokens:9},{id:"wan-27-pro",name:"WAN 27 PRO",tokens:10},{id:"grok-imagine",name:"Grok Imagine",tokens:9}];
 const WORLD=[["✍️","Schwarzdichter","Songtexte aus Idee, Stichworten, Sätzen oder aus einem Bild erschaffen.","https://schwarzdichter.com/?tab=directory"],["🖼️","Bildertonne","KI-Bilder erzeugen, bearbeiten, hochskalieren und verschlüsselt speichern.","https://bildertonne.etmfilm.workers.dev/?tab=tab_community"],["📖","Schreibblockade","Eigene Bücher schreiben: Normseite, Lektorat, KI-Weiterschreiben, Bilder.","/"],["🪶","Federflausen","Kindergeschichten bis 12 Jahre aus Ideen, Fotos oder Würfelideen.","https://federflausen.schwarzdichter.com/?tab=tab_community"],["🧠","Gedankensammler","Gedanken aufschreiben und geschützt verwahren.","https://gedankensammler.schwarzdichter.com"],["🔐","Gedankentresor","Inhalt in ein verschlüsseltes Schließfach legen.","https://gedankentresor.schwarzdichter.com"]];
-let USER=null,VIEW="guest",BOOKS=[],BOOK=null,ACTIVE=0,SAVE=null,WORK=null,MSG="",OK="",MIC=null,INSTALL_EVT=null;
+let USER=null,VIEW="guest",BOOKS=[],BOOK=null,ACTIVE=0,SAVE=null,WORK=null,MSG="",OK="",MIC=null,INSTALL_EVT=null,PENDING=null,IMGOPEN=false;
+
 
 
 function isStandalone(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;}
@@ -703,7 +711,7 @@ function fits(t){var L=trimMetrics();return t.length<=L.max&&visualLines(t).leng
 
 function splitAt(text){if(fits(text))return{kept:text,overflow:""};var lo=0,hi=text.length;while(lo<hi){var mid=Math.ceil((lo+hi)/2);if(fits(text.slice(0,mid)))lo=mid;else hi=mid-1;}var cut=lo;var sp=Math.max(text.lastIndexOf(" ",cut),text.lastIndexOf("\\n",cut));if(sp>cut-48&&sp>0)cut=sp+1;return{kept:text.slice(0,cut).replace(/\\s+$/g,""),overflow:text.slice(cut).replace(/^\\s+/g,"")};}
 function paginate(pages,start){var next=pages.slice(),i=start;while(i<next.length){var r=splitAt(next[i]||"");next[i]=r.kept;if(!r.overflow)break;if(i+1>=next.length)next.push("");next[i+1]=r.overflow+(next[i+1]?(next[i+1].charAt(0)==="\\n"?"":" ")+next[i+1]:"");i++;}if(!next.length)next.push("");return next;}
-function applyQuotes(text,style){var pairs={french:["«","»"],german:["„","“"],english:["“","”"]};var pc=pairs[style]||pairs.french;var out="",open=true,i,ch;for(i=0;i<text.length;i++){ch=text.charAt(i);if("«»„“”\\"".indexOf(ch)>=0){if(ch==="«"||ch==="„"||ch==="“"||ch==='"'){out+=open?pc[0]:pc[1];open=!open;}else out+=ch;}else out+=ch;}return out;}
+function applyQuotes(text,style){var pairs={french:["«","»"],swiss:["»","«"],german:["„","“"],english:["“","”"]};var pc=pairs[style]||pairs.swiss;var out="",open=true,i,ch,q="«»„“”"+'"';for(i=0;i<text.length;i++){ch=text.charAt(i);if(q.indexOf(ch)>=0){out+=open?pc[0]:pc[1];open=!open;}else out+=ch;}return out;}
 function esc(s){return String(s||"").replace(/[&<>"']/g,function(c){return {"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c];});}
 async function api(path,opt){var r=await fetch(path,Object.assign({credentials:"same-origin",headers:{"content-type":"application/json"}},opt||{}));var d=await r.json().catch(function(){return {};});if(d.user)USER=d.user;if(!r.ok)throw new Error(d.error||("HTTP "+r.status));return d;}
 
@@ -754,39 +762,49 @@ function adminPage(){return '<div class="box"><h2>Admin</h2><p class="muted">Nur
 function editorPage(){
   if(!BOOK) return '<div class="box">Lädt …</div>';
   var page=BOOK.pages[ACTIVE]||BOOK.pages[0];
-  var body=page.body||"";
   var L=trimMetrics();
-  var chars=body.length,lines=visualLines(body).length;
-  var pageBtns=BOOK.pages.map(function(_,i){return '<button type="button" class="'+(i===ACTIVE?"on":"")+'" data-pg="'+i+'">'+(i+1)+'</button>';}).join("");
-  var modelOpts=MODELS.map(function(m){return '<option value="'+m.id+'">'+m.name+' · '+m.tokens+' T</option>';}).join("");
   var isBook=BOOK.viewMode==="book" && (BOOK.trimFormat||"normseite")!=="normseite";
   var pos=BOOK.pageNumberPos||"bottom-center";
-  var posClass="pnum "+(pos.indexOf("top")===0?"top":"bottom")+" "+(pos.indexOf("left")>=0?"left":pos.indexOf("right")>=0?"right":"center")+(BOOK.pageNumberVisible===false||pos==="hidden"?" ghost":"");
-  var pnumHtml=pos==="off"?"":'<div class="'+posClass+'">'+(ACTIVE+1)+'</div>';
-  var paper;
-  if(isBook){
-    var px=2.2;
-    var padB=Math.round(L.bleed*px);
-    var tw=Math.round(L.w*px), th=Math.round(L.h*px);
-    var padL=Math.round(L.ml*px), padR=Math.round(L.mr*px), padT=Math.round(L.mt*px), padBt=Math.round(L.mb*px);
-    paper='<div class="bleed" style="padding:'+padB+'px"><span class="tag">Verschnitt '+L.bleed+' mm · '+L.w+'\u00d7'+L.h+' mm</span><div class="trim bookview" lang="de" style="width:'+tw+'px;height:'+th+'px;max-width:100%;padding:'+padT+'px '+padR+'px '+padBt+'px '+padL+'px">'+pnumHtml+'<textarea id="body" maxlength="12000" placeholder="Schreibe im Buchformat …" style="min-height:'+Math.max(120,th-padT-padBt-20)+'px">'+esc(body)+'</textarea></div></div><div class="muted" style="display:flex;justify-content:space-between;flex-wrap:wrap"><span id="stat">'+chars+' / '+L.max+' Zeichen · '+lines+' / '+L.lines+' Zeilen · '+L.cpl+' Zeichen/Zeile</span><span>'+esc(L.label)+' · Seite '+(ACTIVE+1)+'</span></div>';
-  } else {
-    paper='<div class="sheet"><textarea id="body" maxlength="8000" placeholder="Fang einfach an zu schreiben …">'+esc(body)+'</textarea><div class="muted" style="display:flex;justify-content:space-between"><span id="stat">'+chars+' / 1500 · '+lines+' / 30 Zeilen</span><span>Normseite '+(ACTIVE+1)+'</span></div></div>';
+  var modelOpts=MODELS.map(function(m){return '<option value="'+m.id+'">'+m.name+' · '+m.tokens+' T</option>';}).join("");
+  var sheets="", i, from=Math.max(0,ACTIVE-1), to=Math.min(BOOK.pages.length-1, ACTIVE+2);
+  if(BOOK.pages.length<=12){ from=0; to=BOOK.pages.length-1; }
+  for(i=from;i<=to;i++){
+    var pg=BOOK.pages[i], txt=pg.body||"";
+    var side=isBook?(i%2===0?" right":" left"):"";
+    var chars=txt.length, lines=visualLines(txt).length;
+    var posClass="pnum "+(pos.indexOf("top")===0?"top":"bottom")+" "+(pos.indexOf("left")>=0?"left":pos.indexOf("right")>=0?"right":"center")+(BOOK.pageNumberVisible===false||pos==="hidden"?" ghost":"");
+    var pnumHtml='<div class="'+posClass+'">'+(i+1)+'</div>';
+    var inner=(i===ACTIVE)?'<textarea id="body" maxlength="12000" placeholder="Fang einfach an zu schreiben …">'+esc(txt)+'</textarea>':'<div class="bodytxt" data-pg="'+i+'">'+esc(txt)+'</div>';
+    if(isBook){
+      var px=2.2, padB=Math.round(L.bleed*px), tw=Math.round(L.w*px), th=Math.round(L.h*px);
+      var padL=Math.round((i%2===0?L.ml+6:L.ml)*px), padR=Math.round((i%2===1?L.mr+6:L.mr)*px);
+      var padT=Math.round(L.mt*px), padBt=Math.round(L.mb*px);
+      sheets+='<div class="bleed'+side+'" data-pg="'+i+'" style="padding:'+padB+'px"><span class="tag screen-only">Verschnitt '+L.bleed+' mm</span><div class="trim bookview" lang="de" style="width:'+tw+'px;height:'+th+'px;max-width:100%;padding:'+padT+'px '+padR+'px '+padBt+'px '+padL+'px;overflow:hidden">'+pnumHtml+inner+'</div></div>';
+    } else {
+      sheets+='<article class="sheet" data-pg="'+i+'">'+inner+'<div class="foot screen-only"><span>'+chars+' / '+L.max+' · '+lines+' / '+L.lines+' Zeilen</span><span>Normseite '+(i+1)+' / '+BOOK.pages.length+'</span></div></article>';
+    }
   }
-  var trimOpts=[{id:"normseite",l:"VG Wort Normseite (A4)"},{id:"a5",l:"DIN A5 Amazon 14,8\u00d721 cm"},{id:"5x8",l:"Amazon 12,7\u00d720,3 cm (5\u00d78)"},{id:"taschenbuch",l:"Taschenbuch 13,5\u00d720,5 cm"},{id:"6x9",l:"Amazon 15,2\u00d722,9 cm (6\u00d79)"},{id:"hardcover",l:"Hardcover 15,6\u00d723,4 cm"},{id:"custom",l:"Eigenes Ma\u00df"}].map(function(o){return '<option value="'+o.id+'"'+((BOOK.trimFormat||"normseite")===o.id?" selected":"")+'>'+o.l+'</option>';}).join("");
+  if(from>0) sheets='<p class="muted screen-only">… '+from+' Seite(n) darüber</p>'+sheets;
+  if(to<BOOK.pages.length-1) sheets+='<p class="muted screen-only">… '+(BOOK.pages.length-1-to)+' Seite(n) darunter — nutze Gehe zu</p>';
+  var trimOpts=[{id:"normseite",l:"VG Wort Normseite (A4)"},{id:"a5",l:"DIN A5 Amazon 14,8×21 cm"},{id:"5x8",l:"Amazon 12,7×20,3 cm (5×8)"},{id:"taschenbuch",l:"Taschenbuch 13,5×20,5 cm"},{id:"6x9",l:"Amazon 15,2×22,9 cm (6×9)"},{id:"hardcover",l:"Hardcover 15,6×23,4 cm"},{id:"custom",l:"Eigenes Maß"}].map(function(o){return '<option value="'+o.id+'"'+((BOOK.trimFormat||"normseite")===o.id?" selected":"")+'>'+o.l+'</option>';}).join("");
   var pnOpts=[["bottom-right","unten rechts"],["bottom-center","unten mitte"],["bottom-left","unten links"],["top-right","oben rechts"],["top-center","oben mitte"],["top-left","oben links"],["hidden","unsichtbar (im PDF drin)"]].map(function(o){return '<option value="'+o[0]+'"'+(pos===o[0]?" selected":"")+'>'+o[1]+'</option>';}).join("");
-  var customBox=(BOOK.trimFormat==="custom")?'<div style="display:flex;gap:8px"><input id="cw" type="text" inputmode="numeric" value="'+(BOOK.customWidthMm||148)+'" placeholder="Breite mm" style="margin:0"/><input id="ch" type="text" inputmode="numeric" value="'+(BOOK.customHeightMm||210)+'" placeholder="H\u00f6he mm" style="margin:0"/></div>':'';
-  return '<div class="ed"><div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input id="title" value="'+esc(BOOK.title)+'" placeholder="Buchtitel" style="flex:1;margin:0"/><button class="ghost sm" type="button" id="modeM">Normseite</button><button class="ghost sm" type="button" id="modeB">Buchseite</button></div><div class="pages">'+pageBtns+'<button class="ghost sm" type="button" id="addp">Neue Seite</button></div>'+paper+'<div class="micbar"><button type="button" id="mic2">Diktieren (0 Token)</button></div></div><aside class="tools"><p class="muted" id="savestate">Autosave</p>'+(WORK?'<p class="muted">'+esc(WORK)+'</p>':'')+(MSG?'<div class="alert-error">'+esc(MSG)+'</div>':'')+
-    '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="sm" type="button" data-act="spell">Korrigieren</button><button class="ghost sm" type="button" data-act="syn">Synonyme</button><button class="ghost sm" type="button" data-act="imp">Umformulieren</button></div>'+
-    '<p class="muted" style="margin-top:14px">Diktieren \u2014 0 Token</p><button class="ghost" type="button" id="mic">Diktieren</button>'+
-    '<p class="muted" style="margin-top:14px">KI schreibt weiter \u00b7 8 Tokens je Seite</p><div style="display:flex;gap:8px"><button class="sm" type="button" data-act="c1">1 Seite</button><button class="ghost sm" type="button" data-act="c2">2</button><button class="ghost sm" type="button" data-act="c3">3</button></div><div id="synbox"></div>'+
-    '<details style="margin-top:14px"><summary class="muted">Bild zur Seite</summary><select id="imodel">'+modelOpts+'</select><textarea id="iprompt" rows="3" placeholder="Prompt oder leer = Seitentext">'+esc(page.imagePrompt||"")+'</textarea><button class="ghost" type="button" data-act="img">Generieren</button>'+(page.imageUrl?'<img class="illu" src="'+page.imageUrl+'"/>':'')+'</details>'+
+  var customBox=(BOOK.trimFormat==="custom")?'<div style="display:flex;gap:8px"><input id="cw" type="text" inputmode="numeric" value="'+(BOOK.customWidthMm||148)+'" placeholder="Breite mm" style="margin:0"/><input id="ch" type="text" inputmode="numeric" value="'+(BOOK.customHeightMm||210)+'" placeholder="Höhe mm" style="margin:0"/></div>':'';
+  var pending=PENDING?'<div class="pending"><p><b>Vorschlag</b> — übernimmst du den Text?</p><div class="muted" style="white-space:pre-wrap;max-height:10em;overflow:auto">'+esc(PENDING.neu)+'</div><div style="display:flex;gap:8px;margin-top:8px"><button class="sm" type="button" id="acc">Übernehmen</button><button class="ghost sm" type="button" id="rej">Verwerfen</button></div></div>':'';
+  var adultNote=BOOK.isAdult?'<div class="adult-flag">ADULT 18+ ist an. Die KI schreibt ohne Zensur. Haken raus = normale Literatur. Dein Text wird dadurch nicht umgeschrieben.</div>':'<p class="muted">Adult-Haken: schaltet nur die unzensierte KI ein. Am geschriebenen Text ändert sich nichts, bis du Weiterschreiben oder Bild nutzt.</p>';
+  return '<div class="ed"><div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input id="title" value="'+esc(BOOK.title)+'" placeholder="Buchtitel" style="flex:1;margin:0"/><button class="ghost sm" type="button" id="modeM">Normseite</button><button class="ghost sm" type="button" id="modeB">Buchseite</button></div>'+
+    '<div class="jumprow screen-only"><span class="muted">Seite</span><input id="jump" type="text" inputmode="numeric" value="'+(ACTIVE+1)+'"/><span class="muted">von '+BOOK.pages.length+'</span><button class="ghost sm" type="button" id="gojump">Gehe zu</button><button class="ghost sm" type="button" id="addp">Neue Seite darunter</button></div>'+
+    '<div class="stack" id="stack">'+sheets+'</div><div class="micbar"><button type="button" id="mic2">Diktieren (0 Token)</button></div></div><aside class="tools"><p class="muted" id="savestate">Autosave</p>'+(WORK?'<p class="muted">'+esc(WORK)+'</p>':'')+(MSG?'<div class="alert-error">'+esc(MSG)+'</div>':'')+pending+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="sm" type="button" data-act="spell">Korrigieren</button><button class="ghost sm" type="button" data-act="syn">Synonyme</button><button class="ghost sm" type="button" data-act="imp">Umformulieren (fragt nach)</button></div>'+
+    '<p class="muted" style="margin-top:14px">Diktieren — 0 Token</p><button class="ghost" type="button" id="mic">Diktieren</button>'+
+    '<p class="muted" style="margin-top:14px">KI schreibt weiter · 8 Tokens je Seite</p><div style="display:flex;gap:8px"><button class="sm" type="button" data-act="c1">1 Seite</button><button class="ghost sm" type="button" data-act="c2">2</button><button class="ghost sm" type="button" data-act="c3">3</button></div><div id="synbox"></div>'+
+    '<div class="imgbox"><p class="muted" style="margin:0 0 8px">Bild zur Seite — bleibt offen, zeigt Status</p><select id="imodel">'+modelOpts+'</select><textarea id="iprompt" rows="3" placeholder="Prompt oder leer = Seitentext">'+esc(page.imagePrompt||"")+'</textarea><button class="ghost" type="button" data-act="img">Bild generieren</button>'+(page.imageUrl?'<img class="illu" src="'+page.imageUrl+'"/>':'')+'</div>'+
     '<p class="muted" style="margin-top:14px">Buchformat / Verschnitt</p><select id="trim">'+trimOpts+'</select>'+customBox+
     '<label class="muted">Verschnitt mm</label><input id="bleed" type="text" inputmode="numeric" value="'+(BOOK.bleedMm||3)+'"/>'+
     '<label class="muted">Seitenzahl</label><select id="pnpos">'+pnOpts+'</select>'+
-    '<p class="muted" style="margin-top:14px">Verlag</p><select id="quotes"><option value="french">Franz\u00f6sisch \u00ab \u00bb</option><option value="german">Deutsch \u201e \u201c</option><option value="english">Englisch \u201c \u201d</option></select><label class="muted"><input type="checkbox" id="adult" '+(BOOK.isAdult?"checked":"")+'/> Adult-Manuskript</label><button class="ghost" type="button" data-act="quotes">Anf\u00fchrungszeichen setzen</button><button class="ghost" type="button" id="doprint" style="margin-top:8px">Drucken / PDF</button></aside></div>';
+    '<p class="muted" style="margin-top:14px">Anführungszeichen</p><select id="quotes"><option value="swiss">Spitze zum Wort »so«</option><option value="french">Französisch « so »</option><option value="german">Deutsch „ so “</option><option value="english">Englisch “ so ”</option></select>'+
+    '<label class="muted"><input type="checkbox" id="adult" '+(BOOK.isAdult?"checked":"")+'/> Adult 18+</label>'+adultNote+
+    '<button class="ghost" type="button" data-act="quotes">Anführungszeichen setzen</button><button class="sm" type="button" id="doprint" style="margin-top:8px">Alle Seiten als PDF</button></aside></div>';
 }
-
 
 function render(){
   if(!USER && VIEW!=="guest") VIEW="guest";
@@ -834,7 +852,7 @@ function bind(){
     var L=trimMetrics();
     var st=document.getElementById("stat"); if(st) st.textContent=body.value.length+" / "+L.max+" · "+visualLines(body.value).length+" / "+L.lines+" Zeilen";
 
-    if(overflow){ ACTIVE=Math.min(ACTIVE+1, BOOK.pages.length-1); render(); var b2=document.getElementById("body"); if(b2){b2.focus(); var n=b2.value.length; b2.selectionStart=b2.selectionEnd=n;} }
+    if(overflow){ ACTIVE=Math.min(ACTIVE+1, BOOK.pages.length-1); render(); var b2=document.getElementById("body"); if(b2){b2.focus(); var n=b2.value.length; b2.selectionStart=b2.selectionEnd=n;} var sh=document.querySelector(".sheet textarea, .trim textarea"); if(sh) sh.scrollIntoView({block:"start"}); }
   };}
   document.querySelectorAll("[data-pg]").forEach(function(b){b.onclick=function(){ACTIVE=+b.getAttribute("data-pg"); render();};});
   var addp=document.getElementById("addp"); if(addp) addp.onclick=function(){BOOK.pages.push({id:crypto.randomUUID(),body:"",imageUrl:"",imagePrompt:""}); ACTIVE=BOOK.pages.length-1; scheduleSave(); render();};
@@ -852,14 +870,19 @@ function bind(){
   var pnpos=document.getElementById("pnpos"); if(pnpos) pnpos.onchange=function(){ BOOK.pageNumberPos=pnpos.value; BOOK.pageNumberVisible=pnpos.value!=="hidden"; scheduleSave(); render(); };
   var cw=document.getElementById("cw"); if(cw) cw.onchange=function(){ BOOK.customWidthMm=Math.max(80,cw.value|0||148); reflowAll(); scheduleSave(); render(); };
   var ch=document.getElementById("ch"); if(ch) ch.onchange=function(){ BOOK.customHeightMm=Math.max(100,ch.value|0||210); reflowAll(); scheduleSave(); render(); };
-  var doprint=document.getElementById("doprint"); if(doprint) doprint.onclick=function(){ window.print(); };
+  var doprint=document.getElementById("doprint"); if(doprint) doprint.onclick=printAll;
+  var gojump=document.getElementById("gojump"); if(gojump) gojump.onclick=function(){ var n=parseInt(document.getElementById("jump").value,10); if(!n||n<1) n=1; if(n>BOOK.pages.length) n=BOOK.pages.length; ACTIVE=n-1; render(); };
+  var jump=document.getElementById("jump"); if(jump) jump.onkeydown=function(e){ if(e.key==="Enter"){ e.preventDefault(); gojump && gojump.click(); } };
+  document.querySelectorAll(".bodytxt[data-pg], article.sheet[data-pg], .bleed[data-pg]").forEach(function(el){ el.onclick=function(){ var n=+el.getAttribute("data-pg"); if(!isNaN(n) && n!==ACTIVE){ ACTIVE=n; render(); } }; });
+  var acc=document.getElementById("acc"); if(acc) acc.onclick=function(){ if(!PENDING||!BOOK) return; BOOK.pages[ACTIVE].body=PENDING.neu; PENDING=null; scheduleSave(); render(); };
+  var rej=document.getElementById("rej"); if(rej) rej.onclick=function(){ PENDING=null; render(); };
   var pwa=document.getElementById("pwa-install");
   if(pwa) pwa.onclick=async function(){
     if(INSTALL_EVT){ INSTALL_EVT.prompt(); await INSTALL_EVT.userChoice; INSTALL_EVT=null; return; }
     alert(isIOS()?"iPhone: Teilen-Symbol unten (Quadrat mit Pfeil) → Zum Home-Bildschirm.":"Android Chrome: Menü ⋮ → App installieren / Zum Startbildschirm.");
   };
 
-  var quotes=document.getElementById("quotes"); if(quotes){quotes.value=BOOK.quotesStyle||"french"; quotes.onchange=function(){BOOK.quotesStyle=quotes.value; scheduleSave();};}
+  var quotes=document.getElementById("quotes"); if(quotes){quotes.value=BOOK.quotesStyle||"swiss"; quotes.onchange=function(){BOOK.quotesStyle=quotes.value; scheduleSave();};}
   var adult=document.getElementById("adult"); if(adult) adult.onchange=function(){BOOK.isAdult=adult.checked; scheduleSave();};
   var ip=document.getElementById("iprompt"); if(ip) ip.oninput=function(){BOOK.pages[ACTIVE].imagePrompt=ip.value;};
   document.querySelectorAll("[data-act]").forEach(function(b){b.onclick=function(){act(b.getAttribute("data-act"));};});
@@ -868,6 +891,7 @@ function bind(){
 
   if(VIEW==="konto") loadLedger();
   if(VIEW==="admin" && USER && USER.role==="admin") loadAdmin();
+  if(VIEW==="edit"){ var live=document.getElementById("body"); if(live) live.scrollIntoView({block:"center"}); }
 }
 async function go(v){
   if(!USER){ VIEW="guest"; render(); return; }
@@ -882,6 +906,26 @@ async function createBook(adult){ var d=await api("/api/books",{method:"POST",bo
 async function openBook(id){ var d=await api("/api/books/"+id); BOOK=d.book; ACTIVE=0; VIEW="edit"; render(); }
 function scheduleSave(){ var st=document.getElementById("savestate"); if(st) st.textContent="Speichert …"; clearTimeout(SAVE); SAVE=setTimeout(persist,400); try{ localStorage.setItem("sb:"+BOOK.id, JSON.stringify(BOOK)); }catch(e){} }
 async function persist(){ if(!BOOK) return; try{ await api("/api/books/"+BOOK.id,{method:"PUT",body:JSON.stringify(BOOK)}); var st=document.getElementById("savestate"); if(st) st.textContent="Gespeichert"; var t=document.getElementById("tk_sidebar_tokens"); if(t && USER) t.textContent=(USER.tokens|0)+" Tokens"; }catch(e){ var st=document.getElementById("savestate"); if(st) st.textContent=e.message; } }
+function printAll(){
+  if(!BOOK) return;
+  var L=trimMetrics();
+  var isBook=BOOK.viewMode==="book" && (BOOK.trimFormat||"normseite")!=="normseite";
+  var css="body{margin:0;background:#fff;color:#111} .pg{page-break-after:always;box-sizing:border-box;overflow:hidden;";
+  if(isBook) css+="width:"+L.w+"mm;height:"+L.h+"mm;padding:"+L.mt+"mm "+L.mr+"mm "+L.mb+"mm "+L.ml+"mm;font:12.5pt/1.55 Georgia,serif;text-align:justify;}";
+  else css+="width:210mm;height:297mm;padding:25mm 20mm;font:12pt/1.5 'Courier New',Courier,monospace;}";
+  css+=" .pg:last-child{page-break-after:auto} .n{position:absolute;font:10pt Georgia,serif;width:100%;text-align:center;bottom:12mm;left:0}";
+  css+=" @page{size:"+(isBook?(L.w+"mm "+L.h+"mm"):"A4 portrait")+";margin:0}";
+  var html="<!DOCTYPE html><html><head><meta charset=utf-8><title>"+esc(BOOK.title||"Manuskript")+"</title><style>"+css+"</style></head><body>";
+  BOOK.pages.forEach(function(pg,i){
+    var txt=applyQuotes(pg.body||"", BOOK.quotesStyle||"swiss");
+    var hide=BOOK.pageNumberPos==="hidden"||BOOK.pageNumberVisible===false;
+    html+='<div class="pg" style="position:relative">'+(hide?"":'<div class="n">'+(i+1)+"</div>")+esc(txt).replace(/\\n/g,"<br/>")+"</div>";
+  });
+  html+="</body></html>";
+  var w=window.open("","_blank");
+  if(!w){ alert("Pop-ups erlauben, dann nochmal auf Alle Seiten als PDF."); return; }
+  w.document.write(html); w.document.close(); w.focus(); setTimeout(function(){ w.print(); }, 300);
+}
 function toggleMic(){
   var Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!Rec){ alert("Diktieren geht in Chrome oder Safari auf dem Handy."); return; }
@@ -915,7 +959,7 @@ async function act(kind){
       var box=document.getElementById("synbox"); if(box) box.innerHTML='<p class="muted">Synonyme für '+esc(w)+'</p>'+(d.list||[]).map(function(x){return '<button class="ghost sm" type="button" data-syn="'+esc(x)+'">'+esc(x)+'</button>';}).join(" ");
       document.querySelectorAll("[data-syn]").forEach(function(b){b.onclick=function(){ page.body=(page.body||"").replace(w, b.getAttribute("data-syn")); scheduleSave(); render(); };});
     }
-    else if(kind==="imp"){ WORK="Wird umformuliert …"; render(); var d=await api("/api/improve",{method:"POST",body:JSON.stringify({text:page.body||""})}); page.body=d.improved; WORK=null; scheduleSave(); render(); }
+    else if(kind==="imp"){ WORK="Vorschlag wird geholt … nichts wird überschrieben, bevor du zustimmst."; render(); var d=await api("/api/improve",{method:"POST",body:JSON.stringify({text:page.body||""})}); WORK=null; PENDING={kind:"improve", neu:d.improved}; render(); }
     else if(kind==="c1"||kind==="c2"||kind==="c3"){
       var n=+kind.charAt(1); WORK="KI schreibt weiter …"; render();
       var d=await api("/api/continue",{method:"POST",body:JSON.stringify({text:page.body||"",pages:n,isAdult:!!BOOK.isAdult,tier:"standard"})});
@@ -927,9 +971,10 @@ async function act(kind){
     else if(kind==="img"){
       var model=document.getElementById("imodel").value;
       var prompt=(document.getElementById("iprompt").value||page.body||"").slice(0,1200);
-      WORK="Bild entsteht …"; render();
+      if(!prompt.trim()) throw new Error("Bitte einen Bildprompt oder Text auf der Seite.");
+      WORK="Bild entsteht … 10–20 Sekunden. Das Feld bleibt offen."; render();
       var d=await api("/api/image",{method:"POST",body:JSON.stringify({prompt:prompt,modelId:model,isAdult:!!BOOK.isAdult})});
-      BOOK.pages[ACTIVE].imageUrl=d.url; BOOK.pages[ACTIVE].imagePrompt=prompt; WORK=null; scheduleSave(); render();
+      BOOK.pages[ACTIVE].imageUrl=d.url; BOOK.pages[ACTIVE].imagePrompt=prompt; WORK="Bild fertig."; scheduleSave(); render();
     }
     else if(kind==="quotes"){ BOOK.pages=BOOK.pages.map(function(p){return Object.assign({},p,{body:applyQuotes(p.body||"", BOOK.quotesStyle||"french")});}); scheduleSave(); render(); }
   }catch(e){ WORK=null; MSG=e.message; render(); }
