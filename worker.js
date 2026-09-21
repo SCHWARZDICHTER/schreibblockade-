@@ -839,11 +839,12 @@ function bind(){
   document.querySelectorAll("[data-pg]").forEach(function(b){b.onclick=function(){ACTIVE=+b.getAttribute("data-pg"); render();};});
   var addp=document.getElementById("addp"); if(addp) addp.onclick=function(){BOOK.pages.push({id:crypto.randomUUID(),body:"",imageUrl:"",imagePrompt:""}); ACTIVE=BOOK.pages.length-1; scheduleSave(); render();};
   function reflowAll(){
-    var blob=BOOK.pages.map(function(p){return p.body||"";}).join("\n\n").replace(/^\n+|\n+$/g,"");
+    var blob=BOOK.pages.map(function(p){return p.body||"";}).join("\\n\\n").replace(/^\\n+|\\n+$/g,"");
     var next=paginate([blob],0);
     BOOK.pages=next.map(function(t,i){return {id:(BOOK.pages[i]&&BOOK.pages[i].id)||crypto.randomUUID(),body:t,imageUrl:(BOOK.pages[i]&&BOOK.pages[i].imageUrl)||"",imagePrompt:(BOOK.pages[i]&&BOOK.pages[i].imagePrompt)||""};});
     if(ACTIVE>=BOOK.pages.length) ACTIVE=BOOK.pages.length-1;
   }
+
   var modeM=document.getElementById("modeM"); if(modeM) modeM.onclick=function(){BOOK.viewMode="manuscript"; BOOK.trimFormat="normseite"; reflowAll(); scheduleSave(); render();};
   var modeB=document.getElementById("modeB"); if(modeB) modeB.onclick=function(){BOOK.viewMode="book"; if(!BOOK.trimFormat||BOOK.trimFormat==="normseite") BOOK.trimFormat="a5"; reflowAll(); scheduleSave(); render();};
   var trim=document.getElementById("trim"); if(trim) trim.onchange=function(){ BOOK.trimFormat=trim.value; BOOK.viewMode=trim.value==="normseite"?"manuscript":"book"; reflowAll(); scheduleSave(); render(); };
